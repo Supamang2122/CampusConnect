@@ -71,9 +71,9 @@ def get_user_filename(username, filename):
     """Generate a unique file name for each user uploaded picture"""
     return f'{username}_{filename}'
 
-@app.route('/project_id', methods=['GET'])
-def get_project_id():
-    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+@app.route('/project_id_endpoint', methods=['GET'])
+def get_project_id_endpoint():
+    project_id = os.environ.get('PROJECT_ID')
 
     if project_id:
         return jsonify({'project_id': project_id}), 200
