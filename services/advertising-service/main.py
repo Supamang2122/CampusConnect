@@ -51,27 +51,27 @@ def exponential_backoff_retry():
 
 def create_bucket_if_not_exists():
     """Creates a Google Cloud Storage bucket if it doesn't exist."""
-    try:
-        project_id = get_project_id()
-    except ValueError as e:
-        return None, str(e)
+    project_id = get_project_id()
+    if not project_id:
+        raise ValueError('Project ID not found')
 
     bucket_name = f'{project_id}-bucket'
 
     try:
         bucket = storage_client.get_bucket(bucket_name, retry=exponential_backoff_retry())
     except Exception as e:
-        print(f"Error retrieving bucket: {e}")
-        return None, f"Error retrieving bucket: {e}"
+        print(f"Couldnt get bucket {bucket_name}, trying to create it instead")
+        bucket = None
 
     if bucket is None:
         try:
             bucket = storage_client.create_bucket(bucket_name, retry=exponential_backoff_retry())
         except Exception as e:
-            print(f"Error creating bucket: {e}")
-            return None, f"Error creating bucket: {e}"
+            print(f"Error creating bucket: {e}, have to fail")
+            raise RuntimeError(f"Failed to create bucket: {e}")
 
-    return bucket, None
+    return bucket
+
 
 def get_user_filename(username, filename):
     """Generate a unique file name for each user uploaded picture"""
