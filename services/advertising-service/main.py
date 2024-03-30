@@ -27,15 +27,10 @@ def check_storage():
         return False, f'Error accessing Google Cloud Storage: {str(e)}'
 
 def get_project_id():
-    """Retrieve the project ID from the metadata server."""
-    metadata_server = "http://metadata.google.internal/computeMetadata/v1/project/project-id"
-    metadata_flavor = {'Metadata-Flavor': 'Google'}
-
     try:
-        response = request.get(metadata_server, headers=metadata_flavor)
-        if response.status_code == 200:
-            return response.text
-        else:
+        # Retrieve the project ID
+        project_id = storage_client.project
+        if project_id is None:
             return None
     except Exception as e:
         print(f"Error retrieving project ID: {e}")
@@ -61,6 +56,8 @@ def exponential_backoff_retry():
 def create_bucket_if_not_exists():
     """Creates a Google Cloud Storage bucket if it doesn't exist."""
     bucket_name = f'{get_project_id()}-bucket'
+    if bucket_name is None:
+        return None
     try:
         bucket = storage_client.get_bucket(bucket_name, retry=exponential_backoff_retry())
     except Exception as e:
