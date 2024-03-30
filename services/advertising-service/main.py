@@ -29,8 +29,9 @@ def check_storage():
 def get_project_id():
     project_id = os.environ.get('PROJECT_ID')
     if not project_id:
-        return None
-        
+        raise ValueError('PROJECT_ID environment variable not found')
+    return project_id
+
 def exponential_backoff_retry():
     """Exponential backoff retry mechanism."""
     initial_interval = 1  # Initial interval in seconds
@@ -50,22 +51,27 @@ def exponential_backoff_retry():
 
 def create_bucket_if_not_exists():
     """Creates a Google Cloud Storage bucket if it doesn't exist."""
-    bucket_name = f'{get_project_id()}-bucket'
-    if bucket_name is None:
-        return None
+    try:
+        project_id = get_project_id()
+    except ValueError as e:
+        return None, str(e)
+
+    bucket_name = f'{project_id}-bucket'
+
     try:
         bucket = storage_client.get_bucket(bucket_name, retry=exponential_backoff_retry())
     except Exception as e:
         print(f"Error retrieving bucket: {e}")
-        return None
+        return None, f"Error retrieving bucket: {e}"
 
     if bucket is None:
         try:
             bucket = storage_client.create_bucket(bucket_name, retry=exponential_backoff_retry())
         except Exception as e:
             print(f"Error creating bucket: {e}")
-            return None
-    return bucket
+            return None, f"Error creating bucket: {e}"
+
+    return bucket, None
 
 def get_user_filename(username, filename):
     """Generate a unique file name for each user uploaded picture"""
