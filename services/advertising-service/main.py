@@ -27,15 +27,10 @@ def check_storage():
         return False, f'Error accessing Google Cloud Storage: {str(e)}'
 
 def get_project_id():
-    try:
-        # Retrieve the project ID
-        project_id = storage_client.project
-        if project_id is None:
-            return None
-    except Exception as e:
-        print(f"Error retrieving project ID: {e}")
+    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    if not project_id:
         return None
-    
+        
 def exponential_backoff_retry():
     """Exponential backoff retry mechanism."""
     initial_interval = 1  # Initial interval in seconds
