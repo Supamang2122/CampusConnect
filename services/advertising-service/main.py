@@ -71,6 +71,14 @@ def get_user_filename(username, filename):
     """Generate a unique file name for each user uploaded picture"""
     return f'{username}_{filename}'
 
+@app.route('/project_id', methods=['GET'])
+def get_project_id():
+    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+
+    if project_id:
+        return jsonify({'project_id': project_id}), 200
+    else:
+        return jsonify({'error': 'Project ID environment variable not found'}), 500
 
 # Health Check endpoint
 # For use by Google Cloud Load Balancing
