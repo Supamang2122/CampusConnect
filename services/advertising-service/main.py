@@ -27,7 +27,7 @@ def check_storage():
         return False, f'Error accessing Google Cloud Storage: {str(e)}'
 
 def get_project_id():
-    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    project_id = os.environ.get('PROJECT_ID')
     if not project_id:
         return None
         
