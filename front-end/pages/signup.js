@@ -7,7 +7,7 @@ import { createUser } from '../apis/apis';
 import { useRouter } from 'next/router';
 
 export default function Signup(){
-    const [signupUsername, setSignupUsername] = useState("");
+    const [signupEmail, setSignupEmail] = useState("");
     const [signupPw, setSignupPw] = useState("");
     const [signupPwVerify, setSignupPwVerify] = useState("");
     const [errMsg, setErrMsg] = useState("");
@@ -21,7 +21,7 @@ export default function Signup(){
 
     const handleSignUp = () => {
       createUser({
-        user_name: signupUsername,
+        user_name: signupEmail,
         password: signupPw
       }).then((resp) => {
         console.log(resp);
@@ -41,7 +41,7 @@ export default function Signup(){
                   <Text color="white" fontSize="md">{errMsg}</Text>
                   <FormControl id="email">
                     <FormLabel color="white">Email address</FormLabel>
-                    <Input color="white" type="email" name="email" placeholder="Enter email" value={signupUsername} onChange={(event) => setSignupUsername(event.target.value)} _placeholder={{color: "gray.300"}}/>
+                    <Input color="white" type="email" name="email" placeholder="Enter email" value={signupEmail} onChange={(event) => setSignupEmail(event.target.value)} _placeholder={{color: "gray.300"}}/>
                   </FormControl>
                   <FormControl id="password">
                     <FormLabel color="white">Password</FormLabel>
