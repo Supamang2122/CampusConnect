@@ -1,5 +1,14 @@
 import axios from 'axios';
 
+const getUserToken = async (user) => {
+    if(user){
+        return await user.getIdToken();
+    }else{
+        console.log("Not logged in");
+        return 'not-logged-in';
+    }
+}
+
 // Users microservice - create user
 const createUser = async (data) => {
     try {
@@ -25,9 +34,15 @@ const getUser = async ({urlUid, setUser}) => {
 };
 
 // Post microservice - create posts
-const createPost = async (data) => {
+const createPost = async (data, user) => {
     try {
-        return await axios.post('/posting-service/api/posts/create', data);
+        const token = await getUserToken(user);
+
+        return await axios.post('/posting-service/api/posts/create', data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     } catch (err) {
         console.log(err);
     }
@@ -49,22 +64,30 @@ const getPosts = async (setPost) => {
 }
 
 // Advertising microservice
-const uploadImage = async (bucketUrl, data, file, username) => {
+const uploadImage = async (bucketUrl, data, file, username, user) => {
     try {
         // return await axios.post(`/upload?username=${username}`, data);
+        const token = await getUserToken(user);
         return await fetch(`/upload?username=${bucketUrl}`, {
             method: 'POST',
             body: data,
             files: file,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         })
     } catch (error) {
         console.log(error);
     }
 }
-const downloadImage = async (bucketUrl, username, filename) => {
+const downloadImage = async (bucketUrl, username, filename, user) => {
     try {
+        const token = await getUserToken(user);
         return await fetch(`/download?username=${bucketUrl}&filename=${filename}`, {
             method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         })
     } catch (error) {
         console.log(error);

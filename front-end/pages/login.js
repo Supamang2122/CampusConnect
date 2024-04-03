@@ -1,11 +1,26 @@
 import { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, Stack, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import { auth } from '../special/FirebaseConfig';
 
 export default function Login(){
     const [signinEmail, setSigninEmail] = useState("");
     const [signinPw, setSigninPw] = useState("");
     const [errMsg, setErrMsg] = useState("");
+
+    const router = useRouter();
+
+    const onLogin = () => {
+      signInWithEmailAndPassword(auth, signinEmail, signinPw)
+      .then(() => {
+        router.push('/home');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
 
     return(
       <div>
@@ -25,7 +40,7 @@ export default function Login(){
                     <FormLabel color="white">Password</FormLabel>
                     <Input color="white" type="password" name="password" placeholder="Password" value={signinPw} onChange={(event) => setSigninPw(event.target.value)} _placeholder={{color: "gray.300"}}/>
                   </FormControl>
-                  <Button colorScheme="teal">Log in</Button>
+                  <Button colorScheme="teal" onClick={onLogin}>Log in</Button>
                 </Stack>
               </Box>
             </Stack>

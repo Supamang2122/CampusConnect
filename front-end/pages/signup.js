@@ -21,7 +21,6 @@ export default function Signup(){
 
     const handleSignUp = () => {
       createUser({
-        user_id: signupUsername,
         user_name: signupUsername,
         password: signupPw
       }).then((resp) => {
@@ -41,8 +40,8 @@ export default function Signup(){
                 <Stack spacing={4}>
                   <Text color="white" fontSize="md">{errMsg}</Text>
                   <FormControl id="email">
-                    <FormLabel color="white">Username</FormLabel>
-                    <Input color="white" type="username" name="text" placeholder="Enter username" value={signupUsername} onChange={(event) => setSignupUsername(event.target.value)} _placeholder={{color: "gray.300"}}/>
+                    <FormLabel color="white">Email address</FormLabel>
+                    <Input color="white" type="email" name="email" placeholder="Enter email" value={signupUsername} onChange={(event) => setSignupUsername(event.target.value)} _placeholder={{color: "gray.300"}}/>
                   </FormControl>
                   <FormControl id="password">
                     <FormLabel color="white">Password</FormLabel>

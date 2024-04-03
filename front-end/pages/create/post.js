@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, Stack, Text } from '@chakra-ui/react';
 import { Dropzone } from '../../components/Dropzone';
 import { createPost, downloadImage } from '../../apis/apis';
 import { useRouter } from 'next/router';
+import { UserContext } from '../_app';
 
 export default function Post(){
     const [description, setDesc] = useState("");
@@ -14,6 +15,7 @@ export default function Post(){
     const [path, setPath] = useState("");
     const [bucketUrl, setBucketUrl] = useState("");
     const router = useRouter();
+    const user = useContext(UserContext);
 
     useEffect(() => {
         if(window){
@@ -26,12 +28,12 @@ export default function Post(){
     const onPostClick = () => {
         const arrayTags = tags.split(',');
         createPost({
-            "user_id": "3df58ca7-f1a4-4095-841d-60507ccab20a",
+            "user_id": user.uid,
             "order_id": "3df58ca7-f1a4-4095-841d-60507ccab20a",
             description: description,
             price: price,
             tags: arrayTags,
-        }).then((resp) => {
+        }, user).then((resp) => {
             router.push("/home");
         }).catch(err => {
             console.log(err);
@@ -39,7 +41,7 @@ export default function Post(){
     };
     const handleDownload = async () => {
         if (recentImage != null) {
-            const resp = await downloadImage(bucketUrl, 'swag'.concat('_user'), recentImage.name); // TODO actual username
+            const resp = await downloadImage(bucketUrl, 'swag'.concat('_user'), recentImage.name, user); // TODO actual username
             const blob = await resp.json();
             console.log(blob);
             // const createdPath = URL.createObjectURL(blob);
@@ -74,7 +76,7 @@ export default function Post(){
                 </Stack>
                 </Box>
                 <Heading fontSize={"4xl"}>Ad image upload</Heading>
-                <Dropzone setRecentImage={setRecentImage} bucketUrl={bucketUrl} className='p-16 mt-10 border border-neutral-200'/>
+                <Dropzone setRecentImage={setRecentImage} bucketUrl={bucketUrl} userRef={user} className='p-16 mt-10 border border-neutral-200'/>
                 <Heading fontSize={"4xl"}>Download the image you just uploaded</Heading>
                 <Button onClick={handleDownload} disabled={recentImage == null}>Download</Button>
                 <Heading fontSize={"4xl"}>Your image:</Heading>

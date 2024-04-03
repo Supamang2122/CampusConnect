@@ -7,11 +7,11 @@ const Dropzone = (props) => {
             const formData = new FormData();
             const file = acceptedFiles.at(-1);
             const username = 'swag'.concat('_user');
+            const { userRef } = props;
             formData.append('file', file);
             var hostUrl = window.location.hostname;
             hostUrl = hostUrl.replaceAll('.','-');
-            console.log("TEST" + " " + hostUrl);
-            uploadImage(hostUrl, formData, file, username); // TODO change user name to actual username
+            uploadImage(hostUrl, formData, file, username, userRef); // TODO change user name to actual username
             props.setRecentImage(file);
             props.setUploadStatus(respJson.message);
         }, [])

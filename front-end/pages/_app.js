@@ -1,18 +1,29 @@
-import React from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import Head from 'next/head';
 
-import { ChakraProvider, useDisclosure } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 
 import MainNavbar from '../components/MainNavbar';
 import Footer from '../components/Footer';
 
 // Import CSS
 import '../styles/globals.css';
+import { auth } from '../special/FirebaseConfig';
+
+export const UserContext = createContext();
 
 function MyApp({ Component, pageProps }) {
-
-  //Flags
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [user, setUser] = useState(null);
+ 
+  //Check if user is logged in or not
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+      if(userAuth){
+        setUser(userAuth);
+      }
+    })
+    return unsubscribe;
+  }, []);
 
   return(
     <div id="container">
@@ -22,8 +33,10 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <ChakraProvider>
         <>
-            <MainNavbar/>
-            <div id="main-content"><Component {...pageProps}/></div>
+            <UserContext.Provider value={user}>
+              <MainNavbar/>
+              <div id="main-content"><Component {...pageProps}/></div>
+            </UserContext.Provider>
             <Footer/>
         </>
       </ChakraProvider>

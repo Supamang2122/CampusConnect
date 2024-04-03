@@ -1,33 +1,27 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Link from 'next/link';
 import { Avatar, Box, Button, Center, Flex, HStack, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Stack, useDisclosure } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
 import CreateButton from './post-list/PostCreation';
-
-function NavLink(props){
-  const {children, href} = props;
-  return(
-    <Box
-      as={Link}
-      px={2}
-      py={1}
-      rounded={"md"}
-      color={"white"}
-      _hover={{
-        textDecoration: "none",
-        bg: "gray.7 00",
-      }}
-      href={href}
-    >
-      {children}
-    </Box>
-  )
-};
+import { auth } from '../special/FirebaseConfig';
+import { UserContext } from '../pages/_app';
+import { signOut } from 'firebase/auth';
 
 function MainNavbar() {
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [userIcon, setUserIcon] = useState(["gray.100","0"]);
+  const user = useContext(UserContext);
+
+  const signout = () => {
+    signOut(auth)
+      .finally(() => {
+        window.location.href = "/";
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   return (
     <Box bg="gray.900" px={4} position={"fixed"} width={"100%"} zIndex={1000}>
@@ -79,6 +73,7 @@ function MainNavbar() {
                   <MenuItem as={Link} href={`/profile`}>Profile</MenuItem>
                 <MenuDivider/>
                   <MenuItem>Settings</MenuItem>
+                  {user ? <MenuItem onClick={signout}>Sign Out</MenuItem> : <></>}
               </MenuList>
             </Menu>
         </Flex>
