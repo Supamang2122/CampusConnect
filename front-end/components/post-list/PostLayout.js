@@ -23,7 +23,6 @@ export default function PostLayout(){
             gap={12}>
             <Stack>
                 <CreateButton/>
-                <Button>Test Token</Button>
             </Stack>
             <Box flex='1'>
                 <PostList posts={posts}/>
