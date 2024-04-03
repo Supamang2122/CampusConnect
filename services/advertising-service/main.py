@@ -124,7 +124,7 @@ def upload_photo():
     auth_check = check_auth(id_token)
 
     if(not auth_check):
-        return jsonify({'error': 'Invalid auth token'}), 400
+        return jsonify({'error': 'Invalid auth token'}), 500
 
     # Upload file to Google Cloud Storage
     user_filename = get_user_filename(username, file.filename)
