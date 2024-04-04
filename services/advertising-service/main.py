@@ -14,6 +14,20 @@ storage_client = storage.Client()
 # Get user_service API url from env vars
 USER_SERVICE_URL = os.getenv('USER_SERVICE_URL')
 
+def check_auth(id_token):
+    # check if user is logged in using user_service
+    url = USER_SERVICE_URL + '/user-service/api/users/auth'
+    headers = {
+        'Authorization': id_token
+    }
+    
+    response = requests.get(url, headers=headers, timeout=5)
+    if response.status_code == 200:
+        return True
+    else:
+        # User service is not accessible
+        return False
+
 def check_storage():
     try:
         response = requests.get('https://www.googleapis.com/storage/v1/b', timeout=5)
@@ -178,19 +192,6 @@ def download_photo():
 
     return jsonify({'message': f'File {user_filename} downloaded from bucket {bucket.name}'}), 200
 
-def check_auth(id_token):
-    # check if user is logged in using user_service
-    url = USER_SERVICE_URL + '/user-service/api/users/auth'
-    headers = {
-        'Authorization': id_token
-    }
-    
-    response = requests.get(url, headers=headers, timeout=5)
-    if response.status_code == 200:
-        return True
-    else:
-        # User service is not accessible
-        return False
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
